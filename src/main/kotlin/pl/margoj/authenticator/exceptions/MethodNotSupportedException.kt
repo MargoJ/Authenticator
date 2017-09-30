@@ -6,7 +6,7 @@ class MethodNotSupportedException(val method: String, val supportedMethods: Arra
 {
     override fun getLocalizedMessage(): String = "Metoda '$method' nie jest wspierana"
 
-    override fun pouplateEntity(map: MutableMap<String, Any?>)
+    override fun populateEntity(map: MutableMap<String, Any?>)
     {
         map.put("method", this.method)
         map.put("supported_methods", this.supportedMethods)

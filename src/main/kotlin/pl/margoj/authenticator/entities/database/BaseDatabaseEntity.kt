@@ -15,14 +15,14 @@ abstract class BaseDatabaseEntity
     var id: Long? = null
 
     @Column(nullable = false, unique = true, columnDefinition = "CHAR(32)")
-    private val uuid = this.generateUniqueId()
+    val uuid = this.generateUniqueId()
 
     private fun generateUniqueId(): String
     {
         return UUID.randomUUID().toString().replace("-", "")
     }
 
-    override fun equals(other: Any?): Boolean
+    override final fun equals(other: Any?): Boolean
     {
         if (other == null)
         {
@@ -40,8 +40,13 @@ abstract class BaseDatabaseEntity
         return this.uuid == (other as BaseDatabaseEntity).uuid
     }
 
-    override fun hashCode(): Int
+    override final fun hashCode(): Int
     {
         return Objects.hash(this.uuid)
+    }
+
+    override final fun toString(): String
+    {
+        return "${this.javaClass.name}#${this.uuid}"
     }
 }

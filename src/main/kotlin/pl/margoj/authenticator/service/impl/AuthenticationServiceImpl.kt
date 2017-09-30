@@ -3,7 +3,9 @@ package pl.margoj.authenticator.service.impl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.margoj.authenticator.entities.database.Account
+import pl.margoj.authenticator.entities.database.AccountRole
 import pl.margoj.authenticator.entities.database.AccountSession
+import pl.margoj.authenticator.exceptions.InsufficientPermissionsException
 import pl.margoj.authenticator.exceptions.auth.BadCredentialsException
 import pl.margoj.authenticator.exceptions.validation.ExpiredAccountTokenException
 import pl.margoj.authenticator.exceptions.validation.InvalidAccountTokenException
@@ -51,14 +53,21 @@ class AuthenticationServiceImpl @Autowired constructor
 
     override fun validate(accountToken: String): Account
     {
-        val session = this.sessionRepository.findByToken(accountToken) ?: throw InvalidAccountTokenException()
+        val session = this.sessionRepository.findByToken(accountToken)
+
+        this.validate(session)
+
+        return session!!.account!!
+    }
+
+    override fun validate(session: AccountSession?)
+    {
+        session ?: throw InvalidAccountTokenException()
 
         if (session.account!!.currentSession != session || session.activeUntil!!.time < System.currentTimeMillis() || session.invalidated == true)
         {
             throw ExpiredAccountTokenException()
         }
-
-        return session.account
     }
 
     override fun renew(accountToken: String): AccountSession
@@ -77,5 +86,15 @@ class AuthenticationServiceImpl @Autowired constructor
 
         this.accountRepository.save(account)
         return account.currentSession!!
+    }
+
+    override fun requireRole(account: Account, required: AccountRole)
+    {
+        val current = account.accountRole!!
+
+        if(required !in current)
+        {
+            throw InsufficientPermissionsException(current, required)
+        }
     }
 }

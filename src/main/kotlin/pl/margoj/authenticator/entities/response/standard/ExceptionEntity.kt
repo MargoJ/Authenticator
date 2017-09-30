@@ -1,4 +1,4 @@
-package pl.margoj.authenticator.entities.response
+package pl.margoj.authenticator.entities.response.standard
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 

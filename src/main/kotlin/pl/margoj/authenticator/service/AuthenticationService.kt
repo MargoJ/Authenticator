@@ -1,7 +1,9 @@
 package pl.margoj.authenticator.service
 
 import pl.margoj.authenticator.entities.database.Account
+import pl.margoj.authenticator.entities.database.AccountRole
 import pl.margoj.authenticator.entities.database.AccountSession
+import pl.margoj.authenticator.exceptions.InsufficientPermissionsException
 import pl.margoj.authenticator.exceptions.auth.AuthorizationException
 import pl.margoj.authenticator.exceptions.validation.ValidationException
 
@@ -14,8 +16,14 @@ interface AuthenticationService
     fun validate(accountToken: String): Account
 
     @Throws(ValidationException::class)
+    fun validate(session: AccountSession?)
+
+    @Throws(ValidationException::class)
     fun renew(accountToken: String): AccountSession
 
     @Throws(ValidationException::class)
     fun invalidate(accountToken: String): AccountSession
+
+    @Throws(InsufficientPermissionsException::class)
+    fun requireRole(account: Account, required: AccountRole)
 }

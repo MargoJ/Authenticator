@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import pl.margoj.authenticator.entities.response.ExceptionEntity
+import pl.margoj.authenticator.entities.response.standard.ExceptionEntity
 import pl.margoj.authenticator.exceptions.ApplicationException
 import pl.margoj.authenticator.exceptions.MethodNotSupportedException
 import pl.margoj.authenticator.exceptions.ResourceNotFoundException
@@ -49,7 +49,7 @@ class StandardErrorController : ErrorController
     fun onException(exception: Exception): ResponseEntity<ExceptionEntity>
     {
         val entity = ExceptionEntity(
-                message = "An exception has occured while executing your request (${exception.javaClass.simpleName})",
+                message = "An exception has occurred while executing your request (${exception.javaClass.simpleName})",
                 exceptionClassSimple = exception.javaClass.simpleName,
                 exceptionClassFull = exception.javaClass.name,
                 exceptionMessage = exception.message,
@@ -62,7 +62,7 @@ class StandardErrorController : ErrorController
         {
             val properties = entity.properties
             properties.put("application_error", true);
-            exception.pouplateEntity(properties)
+            exception.populateEntity(properties)
             status = exception.statusCode
         }
         else

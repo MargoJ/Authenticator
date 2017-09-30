@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 
 class NullParameterException(val parameters: Collection<String>) : ApplicationException(parameters.joinToString(", "))
 {
-    override fun pouplateEntity(map: MutableMap<String, Any?>)
+    override fun populateEntity(map: MutableMap<String, Any?>)
     {
         map.put("parameters", this.parameters)
     }

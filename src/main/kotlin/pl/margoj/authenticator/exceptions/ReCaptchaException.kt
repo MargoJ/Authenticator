@@ -33,7 +33,7 @@ class ReCaptchaException(val rawErrors: Collection<String>?) : ApplicationExcept
         }
     }
 
-    override fun pouplateEntity(map: MutableMap<String, Any?>)
+    override fun populateEntity(map: MutableMap<String, Any?>)
     {
         if (this.rawErrors != null)
         {

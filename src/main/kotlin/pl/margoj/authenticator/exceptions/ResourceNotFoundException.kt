@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 
 class ResourceNotFoundException(val resource: String) : ApplicationException("Resource '$resource' couldn't be find")
 {
-    override fun pouplateEntity(map: MutableMap<String, Any?>)
+    override fun populateEntity(map: MutableMap<String, Any?>)
     {
         map.put("resource", this.resource)
     }

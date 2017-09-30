@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 
 class InvalidParameterException(val parameter: String, error: String, val errorLocalized: String) : ApplicationException(error)
 {
-    override fun pouplateEntity(map: MutableMap<String, Any?>)
+    override fun populateEntity(map: MutableMap<String, Any?>)
     {
         map.put("parameter", this.parameter)
     }

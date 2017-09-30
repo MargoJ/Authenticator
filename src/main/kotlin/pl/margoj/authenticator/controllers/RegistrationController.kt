@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import pl.margoj.authenticator.entities.request.RegistrationData
-import pl.margoj.authenticator.entities.response.OkResponse
+import pl.margoj.authenticator.entities.response.standard.OkResponse
 import pl.margoj.authenticator.service.ReCaptchaService
 import pl.margoj.authenticator.service.RegistrationService
 import javax.servlet.http.HttpServletRequest

@@ -16,6 +16,9 @@ data class Account @JvmOverloads constructor
         @OneToOne(cascade = arrayOf(CascadeType.ALL))
         var currentSession: AccountSession? = null,
 
+        @OneToOne(cascade = arrayOf(CascadeType.ALL))
+        var currentGameSession: GameSession? = null,
+
         @Enumerated(EnumType.ORDINAL)
         @Column(unique = false, nullable = true)
         var accountRole: AccountRole? = null,
@@ -27,7 +30,10 @@ data class Account @JvmOverloads constructor
         var lastSeen: Date? = null,
 
         @Column(unique = false, nullable = false, columnDefinition = "VARCHAR(45)")
-        var creatingIp: String? = null
+        var creatingIp: String? = null,
+
+        @OneToMany(cascade = arrayOf(CascadeType.ALL), mappedBy = "ownerAccount")
+        var characters: MutableSet<Character>? = null
 ) : BaseDatabaseEntity()
 
 enum class AccountRole

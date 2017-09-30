@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pl.margoj.authenticator.entities.request.AccountCredentials
 import pl.margoj.authenticator.entities.request.TokenOnlyData
-import pl.margoj.authenticator.entities.response.OkResponse
-import pl.margoj.authenticator.entities.response.TokenEntity
-import pl.margoj.authenticator.entities.response.ValidationEntity
+import pl.margoj.authenticator.entities.response.standard.OkResponse
+import pl.margoj.authenticator.entities.response.specific.TokenEntity
+import pl.margoj.authenticator.entities.response.specific.ValidationEntity
 import pl.margoj.authenticator.exceptions.NullParameterException
 import pl.margoj.authenticator.service.AuthenticationService
 import java.util.Collections
@@ -27,7 +27,7 @@ class AuthenticationController @Autowired constructor(val authenticationService:
     }
 
     @RequestMapping("/validate", method = arrayOf(RequestMethod.GET))
-    fun validate(@RequestParam("account_token") accountToken: String?, @RequestParam("character_token", required = false) characterToken: String?): ResponseEntity<ValidationEntity>
+    fun validate(@RequestParam("account_token") accountToken: String?): ResponseEntity<ValidationEntity>
     {
         if (accountToken == null)
         {
