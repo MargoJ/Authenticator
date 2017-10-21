@@ -1,5 +1,6 @@
 package pl.margoj.authenticator.service.impl
 
+import org.apache.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.margoj.authenticator.entities.database.Account
@@ -26,12 +27,15 @@ class AuthenticationServiceImpl @Autowired constructor
         val sessionGeneratorService: SessionGeneratorService
 ) : AuthenticationService
 {
+    private val logger = LogManager.getLogger(AuthenticationServiceImpl::class.java)
+
     override fun authenticate(username: String, password: String, requestingIp: String): AccountSession
     {
         val account = accountRepository.findByUsernameIgnoreCase(username) ?: throw BadCredentialsException()
 
         if (!passwordHashingService.check(password, account.password!!))
         {
+            logger.warn("$username: failed to log in (bad password)(ip: $requestingIp)")
             throw BadCredentialsException()
         }
 
@@ -47,6 +51,8 @@ class AuthenticationServiceImpl @Autowired constructor
         account.lastSeen = Date()
 
         accountRepository.save(account)
+
+        logger.info("${account.username}: logged in successfully (ip: $requestingIp)")
 
         return session
     }
@@ -76,6 +82,8 @@ class AuthenticationServiceImpl @Autowired constructor
         account.currentSession!!.activeUntil = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(2L)) // TODO: Configurable
 
         this.accountRepository.save(account)
+        logger.info("${account.username}: session renewed")
+
         return account.currentSession!!
     }
 
@@ -85,6 +93,8 @@ class AuthenticationServiceImpl @Autowired constructor
         account.currentSession!!.invalidated = true
 
         this.accountRepository.save(account)
+        logger.info("${account.username}: session invalidated")
+
         return account.currentSession!!
     }
 
@@ -92,9 +102,11 @@ class AuthenticationServiceImpl @Autowired constructor
     {
         val current = account.accountRole!!
 
-        if(required !in current)
+        if (required !in current)
         {
-            throw InsufficientPermissionsException(current, required)
+            val exception = InsufficientPermissionsException(current, required)
+            logger.warn("${account.username}: tried to access resiricted endpoint: (current=${account.accountRole!!}, required=$required)", exception)
+            throw exception
         }
     }
 }

@@ -1,5 +1,6 @@
 package pl.margoj.authenticator.service.impl
 
+import org.apache.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -19,6 +20,8 @@ class RegistrationServiceImpl @Autowired constructor
     val hashingService: PasswordHashingService
 ) : RegistrationService
 {
+    private val logger=  LogManager.getLogger(RegistrationServiceImpl::class.java)
+
     private companion object
     {
         const val USERNAME_REGEXP_ERROR = "Username must contain only letters, numbers and '_' characters"
@@ -89,5 +92,7 @@ class RegistrationServiceImpl @Autowired constructor
         )
 
         this.accountRepository.save(newAccount)
+
+        logger.info("${newAccount.username}: registered (ip: $registeredIp)")
     }
 }

@@ -15,4 +15,8 @@ class CharacterServerPresentationEntity(character: Character)
     val gender = character.gender
 
     val level = character.level
+
+    val role = character.ownerAccount!!.accountRole
+
+    val roleId = character.ownerAccount!!.accountRole!!.ordinal
 }

@@ -1,5 +1,6 @@
 package pl.margoj.authenticator.service.impl
 
+import org.apache.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.margoj.authenticator.entities.database.Server
@@ -18,6 +19,8 @@ class ServerServiceImpl @Autowired constructor
         val sessionGeneratorService: SessionGeneratorService
 ) : ServerService
 {
+    private val logger = LogManager.getLogger(ServerServiceImpl::class.java)
+
     companion object
     {
         val SERVER_ID_PATTERN = "[a-z0-9_]{3,32}".toRegex()
@@ -52,6 +55,8 @@ class ServerServiceImpl @Autowired constructor
         )
 
         this.serverRepository.save(server)
+
+        logger.info("${server.serverId}: created")
     }
 
     override fun getServerById(id: String): Server?
@@ -66,6 +71,9 @@ class ServerServiceImpl @Autowired constructor
         server.takeIf { stats != null }?.stats = stats
         server.takeIf { open != null }?.open = open
         server.takeIf { enabled != null }?.enabled = enabled
+
+
+        logger.info("${server.serverId}: updated (name=$name, url=$url, stats=$stats, open=$open, enabled=$enabled)")
 
         this.serverRepository.save(server)
     }

@@ -1,5 +1,6 @@
 package pl.margoj.authenticator.service.impl
 
+import org.apache.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.margoj.authenticator.entities.database.Character
@@ -25,6 +26,8 @@ class GameServiceImpl @Autowired constructor
         val serverService: ServerService
 ) : GameService
 {
+    private val logger = LogManager.getLogger(GameServiceImpl::class.java)
+
     override fun joinServer(character: Character, remoteIp: String): GameSession
     {
         val account = character.ownerAccount!!
@@ -32,6 +35,7 @@ class GameServiceImpl @Autowired constructor
 
         if (!this.serverService.isJoinable(character.server!!))
         {
+            this.logger.warn("${character.ownerAccount!!.username}: tried to join closed server '${character.server.serverId}'(ip: $remoteIp)")
             throw ServerNotJoinableException(character.server.serverId!!, character.server.serverName!!)
         }
 
@@ -50,6 +54,7 @@ class GameServiceImpl @Autowired constructor
         character.lastSeen = Date()
 
         this.accountRepository.save(account)
+        this.logger.info("${character.ownerAccount!!.username}: joined '${character.server.serverId}', char=${character.name}")
 
         return gameSession
     }
@@ -99,6 +104,8 @@ class GameServiceImpl @Autowired constructor
     {
         session.invalidated = true
         this.accountRepository.save(session.character!!.ownerAccount!!)
+        logger.info("${session.character.name}@${session.character.server!!.serverId}: session invalidated")
+
     }
 
     override fun bulkSessionGet(ids: Collection<Long>): Iterable<GameSession>

@@ -1,5 +1,6 @@
 package pl.margoj.authenticator.service.impl
 
+import org.apache.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -24,6 +25,8 @@ class CharacterServiceImpl @Autowired constructor
         val serverService: ServerService
 ) : CharacterService
 {
+    private val logger = LogManager.getLogger(CharacterServiceImpl::class.java)
+
     private companion object
     {
         val VALID_PROFESSIONS = Arrays.asList('w', 'p', 'b', 'm', 't', 'h')
@@ -63,6 +66,7 @@ class CharacterServiceImpl @Autowired constructor
     {
         if (!this.serverService.canEveryoneRegister(server))
         {
+            logger.warn("${account.username}: tried to register on closed server (${server.serverId})")
             throw ServerRegistrationClosedException(server.serverId!!, server.serverName!!)
         }
 
@@ -77,7 +81,7 @@ class CharacterServiceImpl @Autowired constructor
 
         if (!characterName.matches(this.characterRegexp))
         {
-            throw InvalidParameterException("character_name", CHARACTER_RANGE_ERROR, this.characterErrorRegexp)
+            throw InvalidParameterException("character_name", CHARACTER_REGEXP_ERROR, this.characterErrorRegexp)
         }
 
         if (!VALID_PROFESSIONS.contains(profession))
@@ -108,6 +112,7 @@ class CharacterServiceImpl @Autowired constructor
 
         account.characters!!.add(character)
         this.accountRepository.save(account)
+        logger.info("${account.username}: registered new character '${character.name}'(1${character.profession}) on server '${character.server!!.serverId}'")
 
         return character
     }
